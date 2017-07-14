@@ -1,15 +1,22 @@
 const config = {
-  compress: true,
-  style: 'sass',
+  compress: false,
+  style: 'less',
 };
 
 const gulp = require('gulp');
+const browserSync = require('browser-sync');
 const del = require('del');
+const autoprefixer = require('gulp-autoprefixer');
 const sass = require('gulp-sass');
 const less = require('gulp-less');
+const cssnano = require('gulp-cssnano');
+const sourcemaps = require('gulp-sourcemaps');
+const rename = require('gulp-rename');
 
 const gulpif = require('gulp-if');
 const pump = require('pump');
+
+const reload = browserSync.reload;
 
 /*
  *    clean任务，删除dist文件夹
@@ -25,8 +32,38 @@ gulp.task('style', () => {
   pump([
     gulpif((config.style === 'sass'), gulp.src('app/src/sass/style.scss')),
     gulpif((config.style === 'less'), gulp.src('app/src/less/style.less')),
+    sourcemaps.init(),
     gulpif((config.style === 'less'), less()),
-    gulpif((config.style === 'sass'), sass()),
+    gulpif((config.style === 'sass'), sass({
+      precision: 10,
+    })),
+    autoprefixer({
+      browsers: ['last 10 Chrome versions', 'Firefox >= 40'],
+    }),
+    gulpif((config.compress), cssnano()),
+    gulpif((config.compress), rename({
+      suffix: '.min',
+    })),
+    sourcemaps.write('./'),
     gulp.dest('app/dist/css'),
+    reload({
+      stream: true,
+    }),
   ]);
+});
+
+/*
+ *    default 任务
+ */
+gulp.task('default', ['style', 'script'], () => {
+  browserSync.init({
+    server: {
+      baseDir: 'app',
+    },
+  });
+
+  gulp.watch('app/src/sass/**', ['style']);
+  gulp.watch('app/src/less/**', ['style']);
+  gulp.watch('app/src/js/**', ['script']);
+  gulp.watch('app/html/**').on('change', reload);
 });
