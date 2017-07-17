@@ -1,9 +1,11 @@
 const config = {
+  es6: true,
+  style: 'sass',
   compress: false,
-  style: 'less',
 };
 
 const gulp = require('gulp');
+const babel = require('gulp-babel');
 const browserSync = require('browser-sync');
 const del = require('del');
 const autoprefixer = require('gulp-autoprefixer');
@@ -12,6 +14,7 @@ const less = require('gulp-less');
 const cssnano = require('gulp-cssnano');
 const sourcemaps = require('gulp-sourcemaps');
 const rename = require('gulp-rename');
+const uglify = require('gulp-uglify');
 
 const gulpif = require('gulp-if');
 const pump = require('pump');
@@ -52,6 +55,26 @@ gulp.task('style', () => {
   ]);
 });
 
+
+/*
+ *    script任务，编译JavaScript文件
+ */
+gulp.task('script', () => {
+  pump([
+    gulp.src('app/src/js/**'),
+    sourcemaps.init(),
+    gulpif((config.es6), babel()),
+    gulpif((config.compress), uglify()),
+    gulpif((config.compress), rename({
+      suffix: '.min',
+    })),
+    sourcemaps.write('./'),
+    gulp.dest('app/dist/js'),
+    reload({
+      stream: true,
+    }),
+  ]);
+});
 /*
  *    default 任务
  */
