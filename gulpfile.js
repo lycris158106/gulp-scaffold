@@ -1,6 +1,6 @@
 const config = {
   es6: true,
-  style: 'sass',
+  style: 'less',
   compress: false,
 };
 
@@ -96,8 +96,7 @@ gulp.task('default', ['style', 'script'], () => {
     },
   });
 
-  gulp.watch('app/src/sass/**', ['style']);
-  gulp.watch('app/src/less/**', ['style']);
+  gulp.watch(['app/src/sass/**', 'app/src/less/**'], ['style']);
   gulp.watch('app/src/js/**', ['script']);
   gulp.watch('app/src/images/**', ['images']);
   gulp.watch('app/html/**').on('change', reload);
