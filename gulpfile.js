@@ -4,20 +4,20 @@ const config = {
   compress: false,
 };
 
-const gulp = require('gulp');
+const autoprefixer = require('gulp-autoprefixer');
 const babel = require('gulp-babel');
 const browserSync = require('browser-sync');
-const del = require('del');
-const autoprefixer = require('gulp-autoprefixer');
-const sass = require('gulp-sass');
-const less = require('gulp-less');
 const cssnano = require('gulp-cssnano');
-const sourcemaps = require('gulp-sourcemaps');
-const rename = require('gulp-rename');
-const uglify = require('gulp-uglify');
-
+const del = require('del');
+const gulp = require('gulp');
 const gulpif = require('gulp-if');
+const imagemin = require('gulp-imagemin');
+const less = require('gulp-less');
 const pump = require('pump');
+const rename = require('gulp-rename');
+const sass = require('gulp-sass');
+const sourcemaps = require('gulp-sourcemaps');
+const uglify = require('gulp-uglify');
 
 const reload = browserSync.reload;
 
@@ -55,7 +55,6 @@ gulp.task('style', () => {
   ]);
 });
 
-
 /*
  *    script任务，编译JavaScript文件
  */
@@ -75,6 +74,18 @@ gulp.task('script', () => {
     }),
   ]);
 });
+
+/*
+ *    image任务，压缩图片
+ */
+gulp.task('images', () => {
+  pump([
+    gulp.src('app/src/images/**'),
+    imagemin(),
+    gulp.dest('app/dist/images/**'),
+  ]);
+});
+
 /*
  *    default 任务
  */
@@ -88,5 +99,6 @@ gulp.task('default', ['style', 'script'], () => {
   gulp.watch('app/src/sass/**', ['style']);
   gulp.watch('app/src/less/**', ['style']);
   gulp.watch('app/src/js/**', ['script']);
+  gulp.watch('app/src/images/**', ['images']);
   gulp.watch('app/html/**').on('change', reload);
 });
