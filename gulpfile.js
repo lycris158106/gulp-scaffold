@@ -13,6 +13,7 @@ const gulp = require('gulp');
 const gulpif = require('gulp-if');
 const imagemin = require('gulp-imagemin');
 const less = require('gulp-less');
+const plumber = require('gulp-plumber');
 const pump = require('pump');
 const rename = require('gulp-rename');
 const sass = require('gulp-sass');
@@ -35,6 +36,7 @@ gulp.task('style', () => {
   pump([
     gulpif((config.style === 'sass'), gulp.src('app/src/sass/style.scss')),
     gulpif((config.style === 'less'), gulp.src('app/src/less/style.less')),
+    plumber(),
     sourcemaps.init(),
     gulpif((config.style === 'less'), less()),
     gulpif((config.style === 'sass'), sass({
@@ -61,6 +63,7 @@ gulp.task('style', () => {
 gulp.task('script', () => {
   pump([
     gulp.src('app/src/js/**'),
+    plumber(),
     sourcemaps.init(),
     gulpif((config.es6), babel()),
     gulpif((config.compress), uglify()),
@@ -81,6 +84,7 @@ gulp.task('script', () => {
 gulp.task('images', () => {
   pump([
     gulp.src('app/src/images/**'),
+    plumber(),
     imagemin(),
     gulp.dest('app/dist/images/**'),
   ]);
