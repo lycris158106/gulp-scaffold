@@ -86,7 +86,7 @@ gulp.task('images', () => {
     gulp.src('app/src/images/**'),
     plumber(),
     imagemin(),
-    gulp.dest('app/dist/images/**'),
+    gulp.dest('app/dist/images'),
   ]);
 });
 
